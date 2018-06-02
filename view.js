@@ -41,7 +41,7 @@ EventCounterView.prototype.onNotify = function(topicName) {
 			break;
 
 		default:
-			console.log('Not subscribe [' + topicName + ']');
+			console.error('No handling [' + topicName + ']');
 	}
 
 	this._display();
@@ -94,7 +94,7 @@ CoinCounterView.prototype.onNotify = function(topicName) {
 			break;
 
 		default:
-			console.log('Not subscribe [' + topicName + ']');
+			console.error('No handling [' + topicName + ']');
 	}
 
 	this._display();
@@ -148,7 +148,7 @@ SlimeCounterView.prototype.onNotify = function(topicName) {
 			break;
 
 		default:
-			console.log('Not subscribe [' + topicName + ']');
+			console.error('No handling [' + topicName + ']');
 	}
 
 	this._calcSlimePoint();
@@ -214,7 +214,7 @@ SlimeTimesCounterView.prototype.onNotify = function(topicName) {
 			break;
 
 		default:
-			console.log('Not subscribe [' + topicName + ']');
+			console.error('No handling [' + topicName + ']');
 	}
 
 	this._pushHistory(topicName);
@@ -296,7 +296,7 @@ SnsNotificationView.prototype.onNotify = function(topicName, options) {
 			break;
 
 		default:
-			console.log('Not subscribe [' + topicName + ']');
+			console.error('No handling [' + topicName + ']');
 	}
 
 	var text1 = '○○さんが' + text;
