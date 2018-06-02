@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Example : Event - Pub/Sub</title>
+<meta name="description" content="An Example of JavaScript" />
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+<link href="index.css" rel="stylesheet">
+
+<script>
+	//--------------------------------------------------
+	var channel;
+
+	var coinCounterView;
+	var snsNotificationView;
+
+	function onload() {
+		channel = new Channel();
+
+		var view1 = new EventCounterView(channel);
+		coinCounterView = new CoinCounterView(channel);
+		var view3 = new SlimeCounterView(channel);
+		var view4 = new SlimeTimesCounterView(channel);
+		snsNotificationView = new SnsNotificationView(channel);
+	}
+
+	//--------------------------------------------------
+	//■ボタンのクリック
+
+	function jump() {
+		//
+		//ここに本来のジャンプする処理があるとする
+		//
+
+		//最後に、ジャンプした旨のイベントを発行する（そこまでが自分の役割）
+		var options = {'occurred_at': new Date()};
+		channel.publish('jumped', options);
+	}
+
+	function beatSlime() {
+		//
+		//ここに本来のスライムを倒す処理があるとする
+		//
+
+		//最後に、倒した旨のイベントを発行する（そこまでが自分の役割）
+		var options = {'occurred_at': new Date()};
+		channel.publish('beated', options);
+	}
+
+	function reachTopFloor() {
+		//
+		//ここに本来の最上階に到達する処理があるとする
+		//
+
+		//最後に、到達した旨のイベントを発行する（そこまでが自分の役割）
+		var options = {'occurred_at': new Date()};
+		channel.publish('reached', options);
+	}
+
+	//--------------------------------------------------
+	//■ラジオボタンの選択
+
+	function subscribeOnCoin(topicName) {
+		coinCounterView.subscribe(topicName);
+	}
+
+	function unsubscribeOnCoin(topicName) {
+		coinCounterView.unsubscribe(topicName);
+	}
+
+	function subscribeOnSns(topicName) {
+		snsNotificationView.subscribe(topicName);
+	}
+
+	function unsubscribeOnSns(topicName) {
+		snsNotificationView.unsubscribe(topicName);
+	}
+
+	//--------------------------------------------------
+</script>
+</head>
+
+<body onload="onload();">
+<div id="main">
+	<div id="memo">
+		<dl class="cf">
+			<dt>GitHub Code</dt>
+			<dd><a target="_blank" href="https://github.com/kirishimapublic/event/">https://github.com/kirishimapublic/event/</a></dd>
+		</dl>
+	</div>
+	<div id="content">
+		<div class="memo-area">
+			<div>
+				<p>
+					以下の３つのボタンをクリックすることで、画面下部の数値が変わります。
+					<br>（●右クリックでソースを表示し、各ボタンのonclickで何をしているかご覧下さい）
+				</p>
+			</div>
+		</div>
+		<div class="event-src-area">
+			<div class="event-src">
+				<div><input type="button" class="button middle" value="ジャンプする" onclick="jump();"></div>
+				<div><span>コイン　＋１</span></div>
+			</div>
+			<div class="event-src">
+				<div><input type="button" class="button middle" value="スライムを倒す" onclick="beatSlime();"></div>
+				<div><span>コイン　＋２</span></div>
+			</div>
+			<div class="event-src">
+				<div><input type="button" class="button middle" value="最上階に到達" onclick="reachTopFloor();"></div>
+				<div><span>コイン　＋５</span></div>
+			</div>
+		</div>
+		<div class="memo-area">
+			<div>
+				<p>「コインの獲得枚数」「SNSに投稿」部分にあるラジオボタンで「しない」を選択すると、該当するイベントに反応しなくなります。</p>
+			</div>
+		</div>
+		<div class="view-area">
+			<div class="view" id="event-counter-view">
+				<div><span>イベント発生回数</span></div>
+				<div><span class="label">ジャンプ　：</span><span class="num jumped">999</span></div>
+				<div><span class="label">スライム　：</span><span class="num beated">999</span></div>
+				<div><span class="label">最上階到達：</span><span class="num reached">999</span></div>
+			</div>
+			<div class="view" id="coin-counter-view">
+				<div><span>コインの獲得枚数</span></div>
+				<div><span class="label-empty"></span><span class="num coin-amount">999</span></div>
+				<br>
+				<div class="select-area">
+					<div>ジャンプEventでカウント</div>
+					<label class="label"><input type="radio" name="coin-event-jumped" class="" onclick="subscribeOnCoin('jumped');" checked="checked">する</label>
+					<label class="label"><input type="radio" name="coin-event-jumped" class="" onclick="unsubscribeOnCoin('jumped');">しない</label>
+				</div>
+				<div class="select-area">
+					<div>倒したEventでカウント</div>
+					<label class="label"><input type="radio" name="coin-event-beated" class="" onclick="subscribeOnCoin('beated');" checked="checked">する</label>
+					<label class="label"><input type="radio" name="coin-event-beated" class="" onclick="unsubscribeOnCoin('beated');">しない</label>
+				</div>
+				<div class="select-area">
+					<div>到達Eventでカウント</div>
+					<label class="label"><input type="radio" name="coin-event-reached" class="" onclick="subscribeOnCoin('reached');" checked="checked">する</label>
+					<label class="label"><input type="radio" name="coin-event-reached" class="" onclick="unsubscribeOnCoin('reached');">しない</label>
+				</div>
+			</div>
+			<div class="view" id="slime-counter-view">
+				<div><span>スライムを5回倒すごとに</span></div>
+				<div><span>1ポイントGET！</span></div>
+				<div class="slime-point"><span class="label-empty"></span><span class="num slime-point-amount">999</span></div>
+				<br>
+				<div><span>3回連続ジャンプ直後に</span></div>
+				<div><span>スライムを倒すと</span></div>
+				<div><span>1ポイントGET！</span></div>
+				<div class="slime-times-point"><span class="label-empty"></span><span class="num slime-times-point-amount">999</span></div>
+			</div>
+			<div class="view view-wide" id="sns-notification-view">
+				<div><span>達成したイベントを SNS に投稿します（※ダミー）</span></div>
+				<div class="select-area">
+					<div>倒したEventを投稿</div>
+					<label class="label"><input type="radio" name="sns-event-beated" class="" onclick="subscribeOnSns('beated');" checked="checked">する</label>
+					<label class="label"><input type="radio" name="sns-event-beated" class="" onclick="unsubscribeOnSns('beated');">しない</label>
+				</div>
+				<div class="select-area">
+					<div>到達Eventを投稿</div>
+					<label class="label"><input type="radio" name="sns-event-reached" class="" onclick="subscribeOnSns('reached');" checked="checked">する</label>
+					<label class="label"><input type="radio" name="sns-event-reached" class="" onclick="unsubscribeOnSns('reached');">しない</label>
+				</div>
+				<div>
+					<ul class="sns-items">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="jquery-3.2.1.min.js"></script>
+<script src="pubsub.js"></script>
+<script src="view.js"></script>
+</body>
+</html>
